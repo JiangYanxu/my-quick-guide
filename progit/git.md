@@ -6,7 +6,12 @@
 > 标签:`lightweight`轻量标签,`annotated`附属标签
 > * 轻量标签只是一个名称,用于引用版本
 > * 附属标签是完整的对象,在具有引用作用的同时,包含打标签者名称,电子邮件,日期时间,标签信息等信息.
-
+> 项目版本可以看成树.(一般情况下)分支名就是指向叶子节点的指针.
+> HEAD是当前节点的指针名.
+> 切换分支时无需担心暂存区和工作区未提交的内容,因为暂存区和工作区不干净将导致切换分支失败.
+> 跟踪分支:本地分支跟踪远程分支,本地分支的推送与拉取的对象默认为被跟踪的远程分支.
+> 分支的合并有两种方式:1.merge;2.rebase.
+> * 变基的分支不可推送到远程仓库.因为分支推送后,其他作者按照此分支继续工作.你再变基该分支,随后再次推送.其他作者不得不将继续的工作与变基分支做合并.乱的要死.
 
 ## 获得帮助
 ### manual:`git help <verb>`
@@ -15,6 +20,7 @@
 ## 未成气候的命令
 * `git init`:初始化,创建`.git`文件夹.
 * `git clone <url> [DirectoryName]`:克隆url到./DirectoryName文件夹下.
+  * `-o, --origin <name>`:定义remote name.
 * `git status`:查看当前目录状态.
   * `-s`or`--short`:以简介的方式更改,首列为暂存区,次列为工作区,`??`代表未追踪.
 * `git add <FileName>:将未追踪状态或已更改状态的文件添加到暂存区.
@@ -57,7 +63,7 @@
 * `git push <remote> <branch>`:将branch分支推送到remote远程仓库
 * `git tag`:查看标签
   * `-l [<String>]:给定字符串,查找匹配的标签列表
-  * `-a <tag_name> [-m tag_message] [<head>]:创建附属标签,head是版本的校验和
+  * `-a <tag_name> [-m tag_message] [<head>]:创建附属标签,head是版本的校验和.
   * `<tag_name>`:创建轻量标签
   * `-d <tag_name>`:删除标签
 * `git show <tag_name>`:查看标签,轻量标签展示所引用的版本信息;附属标签额外展示附属标签的相关信息
@@ -65,12 +71,34 @@
 * `git push <remote> --tags`:推送所有标签到远程仓库
 * `git push <remote> :refs/tags/<tag_name>`:删除远程仓库标签
 * `git push <remote> --delet <tag_name>`:删除远程仓库标签
+* `git branch`:查看当前分支, `\*`星号代表HEAD所指的分支(或者说`checkout`检出的分支).
+  * `-v`or`--verbose`:分支详情
+  * `-vv`:查看分支详情,以及与被跟踪分支的关系.
+  * `<branch_name>`:在当前分支上创建新分支.
+  * `-d <name>`:删除分支
+  * `--merged [branch_name]`:已合并的分支,`branch_name`默认为HEAD.(删除无影响)
+  * `--no-merged`:未合并的分支(无法正常删除)
+  * `-u, --set-upstream-to <upstream>`:设置跟踪分支
+* `git log --oneline --decorate`:查看各分支所指向的对象.
+* `git checkout <branch_name>`:切换分支
+  * `git checkout -b <branch_name> <remote>/<branch>`:根据远程分支创建并切换分支.
+    * 等价于`git checkout --track <remote>/<branch>`:根据远程分支创建同名分支并切换.
+* `git log --oneline --decorate --graph --all`:一行;查看分支所指;图形;所有
+* `git merge <name>`:将HEAD与name分支合并. 当name分支是HEAD的子节点时,将直接把HEAD推进到name所指对象.因为潜在的分歧都在name推进中解决了.HEAD和name所指对象没有分歧,这种情况将使用`fast-forward`.**问题5**
+* `git push <remote> <branch>`:推送
+  * `git push <remote> <local_branch>:<remote_branch>:不同名分支
+* `git rebase <base_branch>`:变基,将当前分支的所有更改在`base_branch`上应用一遍.取得新的分支.可以简单理解为当前分支带着所有的变动成为`base_branch`的下一个版本.
+  * `git rebase --onto <b1> <b2> <b3>`:取b3中从b2分离后的补丁,在b1上重放.
+  * `git rebase <b1> <b2>`:取b2的补丁在b1重放
 
 
 ## 待了解问题
 1. `.gitignore`模板
 2. glob模式
 3. `git difftool`如何调用`emerge`或`vimdiff`软件,以及软件的使用方法. 
+  * `git mergetool`是干嘛的?
+4. 可能有叶子节点没有分支名吗? 什么情况下会出现?
+5. HEAD指向历史节点.`git merge <name>`会发生什么?
 
 ## `.gitignore`文件
 * 注释以`#`开头

@@ -1,0 +1,2 @@
+# 屏蔽progit下所有git测试文件夹
+/progit/*/
